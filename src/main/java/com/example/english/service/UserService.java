@@ -1,62 +1,111 @@
 package com.example.english.service;
 
+import com.example.english.dto.DtoMapper;
+import com.example.english.dto.DtoUser;
+import com.example.english.dto.DtoUserIU;
+import com.example.english.entity.Role;
 import com.example.english.entity.User;
+import com.example.english.exception.BaseException;
+import com.example.english.exception.ErrorMessage;
+import com.example.english.exception.MessageType;
 import com.example.english.repo.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@RequiredArgsConstructor
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final DtoMapper dtoMapper;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.orElseThrow(EntityNotFoundException::new);
     }
-    public List<User> findAll(){
-        return userRepository.findAll();
+
+    public List<DtoUser> findAll(){
+        try{
+            return dtoMapper.usersToUserResponseDto(userRepository.findAll());
+        }catch (Exception e){
+            throw new BaseException(new ErrorMessage(MessageType.GENERAL_EXCEPTION,e.getMessage()));
+        }
     }
     public void deleteById(int id) {
-        userRepository.deleteById(id);
+        try{
+            userRepository.deleteById(id);
+        }catch (Exception e){
+            throw new BaseException(new ErrorMessage(MessageType.DElETE_FAILED));
+        }
+
     }
-    public User save(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    public DtoUser save(DtoUserIU dto) {
+        try{
+            User user =dtoMapper.userRequestDtoToUser(dto);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setAccountNonExpired(true);
+            user.setAccountNonLocked(true);
+            user.setCredentialsNonExpired(true);
+            user.setEnabled(true);
+            user.setAuthorities(Collections.singleton(Role.ROLE_USER));
+            User savedUser=userRepository.save(user);
+            return dtoMapper.userToUserResponseDto(savedUser);
+        }catch (Exception e){
+            throw new BaseException(new ErrorMessage(MessageType.RECORD_FAILED,e.getMessage()));
+        }
     }
-    public User getUserByUserName(String username) {
-        return userRepository.getUserByUsername(username);
-    }
-    public User checkCredentials(String username, String password) {
+
+    public DtoUser checkCredentials(String username, String password) {
         Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (passwordEncoder.matches(password, user.getPassword())) {
-                return user;
+                return dtoMapper.userToUserResponseDto(user);
             }
         }
-        return null;
+        throw new BaseException(new ErrorMessage(MessageType.INVALID_PASSWORD_OR_USERNAME));
     }
     public void addPoint(int id){
-        User user=userRepository.findById(id).orElseThrow();
-        System.out.println(user.getPoint());
-        user.setPoint(user.getPoint()+5);
-        user.setTestNumber(user.getTestNumber()+1);
-        userRepository.save(user);
+        try{
+            User user=userRepository.findById(id);
+            System.out.println(user.getPoint());
+            user.setPoint(user.getPoint()+5);
+
+            userRepository.save(user);
+
+        }catch (Exception e){
+            throw new BaseException(new ErrorMessage(MessageType.GENERAL_EXCEPTION,e.getMessage()));
+        }
+
     }
     public String pointShow(int id){
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id);
+        if (user==null) {
+            throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_FOUND));
+        }
         return String.valueOf(user.getPoint());
     }
-    public Optional<User> findUser(int id) {
-        return userRepository.findById(id);
+
+    public DtoUser getUserById(int id) {
+        User data= userRepository.findById(id);
+        if (data==null) {
+            throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_FOUND));
+        }
+        return dtoMapper.userToUserResponseDto(data);
     }
 
-    public User getUserById(int id) {
-        return userRepository.findById(id).orElseThrow();
-    }
+
+
 
 }

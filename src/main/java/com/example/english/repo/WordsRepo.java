@@ -12,16 +12,23 @@ import java.util.Optional;
 
 @Repository
 public interface WordsRepo extends JpaRepository<Words, Integer> {
-    @Query("SELECT w FROM Words w WHERE w.workType = :workType AND w.id NOT IN :wordIds ORDER BY RAND() LIMIT 20")
+    @Query(value = "SELECT TOP 20 * FROM words WHERE work_type = :workType AND id NOT IN (:wordIds) ORDER BY NEWID()",nativeQuery = true)
     List<Words> findRandomWordsByWorkTypeAndExcludeWordIds( String workType,  List<Integer> wordIds);
+
+
+
     @Query("SELECT w FROM Words w WHERE w  IN :wordIds  AND w.workType = :workType ORDER BY w.id")
     List<Words> findWorkByIdsAndByWorkType(List<Integer> wordIds,String workType);
+
     @Query("SELECT w FROM Words w WHERE w  IN :wordIds  ORDER BY w.id")
     List<Words> findWorkByIds(List<Integer> wordIds);
 
-    @Query(value = "SELECT w FROM Words w WHERE w.workType = ?1 ORDER BY RAND() LIMIT 1")
+    @Query(value = "SELECT TOP 1 * FROM words WHERE work_type = ?1 ORDER BY NEWID()", nativeQuery = true)
     Optional<Words> findRandomWordByWorkType(String workType);
-    @Query(value = "SELECT w.meanings FROM Words w WHERE w.meanings <> ?1 ORDER BY RAND() LIMIT 3")
+
+
+
+    @Query(value = "SELECT TOP 3 w.meanings FROM Words w WHERE w.meanings <> ?1 ORDER BY NEWID()",nativeQuery = true)
     List<String> findRandomMeaningsExcluding(String correctMeaning);
     Words findWordsByTerms(String string);
 
