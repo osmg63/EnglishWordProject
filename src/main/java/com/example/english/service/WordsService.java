@@ -1,16 +1,36 @@
 package com.example.english.service;
 
 import com.example.english.dto.DtoTestGame;
+import com.example.english.dto.DtoTransactionWord;
 import com.example.english.entity.Words;
 import com.example.english.exception.BaseException;
 import com.example.english.exception.ErrorMessage;
 import com.example.english.exception.MessageType;
 import com.example.english.repo.WordsRepo;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.UnitValue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.itextpdf.layout.Document;
+
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Table;
 
 @RequiredArgsConstructor
 @Service
@@ -41,7 +61,70 @@ public class WordsService {
 
     }
 
-    public void createWorldById(Words words) {
+    public byte[] pdfForWord(String workType,int id){
+    try{
+      var data =findWordIdsByUserIdNotInTransactions(workType,id);
+        DtoTransactionWord dtoTransactionWord = new DtoTransactionWord();
+        dtoTransactionWord.setDate(LocalDateTime.now());
+        dtoTransactionWord.setKnow(true);
+        dtoTransactionWord.setUserId(id);
+
+        for (Words word : data){
+            dtoTransactionWord.setWordId(word.getId());
+            transactionService.createTransaction(dtoTransactionWord);
+        }
+
+      List<Map<String,Object>> map= data.stream().map(word -> {
+
+          Map<String,Object> map1 = new HashMap<>();
+          map1.put("terms", word.getTerms());
+          map1.put("meanings", word.getMeanings());
+          map1.put("meanings2", word.getMeanings2());
+          map1.put("meanings3", word.getMeanings3());
+          map1.put("workType", word.getWorkType());
+          return map1;
+      }).collect(Collectors.toList());
+
+      return generateWordListPdf(map);
+    }catch (Exception e){
+        throw new BaseException(new ErrorMessage(MessageType.RECORD_FAILED,e.getMessage()));
+        }
+    }
+
+    public byte[] generateWordListPdf(List<Map<String, Object>> words) throws Exception {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(outputStream);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document doc = new Document(pdf);
+
+
+        PdfFont font = PdfFontFactory.createFont("src/main/resources/a.ttf");
+
+        float[] columnWidths = {100f, 150f, 150f, 150f, 50f};
+        Table table = new Table(columnWidths);
+        table.setWidth(UnitValue.createPercentValue(100));
+
+        // Başlık satırı
+        table.addHeaderCell(new Cell().add(new Paragraph("Kelime")).setBackgroundColor(ColorConstants.LIGHT_GRAY).setFont(font));
+        table.addHeaderCell(new Cell().add(new Paragraph("Anlam 1")).setBackgroundColor(ColorConstants.LIGHT_GRAY).setFont(font));
+        table.addHeaderCell(new Cell().add(new Paragraph("Anlam 2")).setBackgroundColor(ColorConstants.LIGHT_GRAY).setFont(font));
+        table.addHeaderCell(new Cell().add(new Paragraph("Anlam 3")).setBackgroundColor(ColorConstants.LIGHT_GRAY).setFont(font));
+        table.addHeaderCell(new Cell().add(new Paragraph("Seviye")).setBackgroundColor(ColorConstants.LIGHT_GRAY).setFont(font));
+
+        for (Map<String, Object> word : words) {
+            table.addCell(new Paragraph(String.valueOf(word.get("terms"))).setFont(font));
+            table.addCell(new Paragraph(String.valueOf(word.get("meanings"))).setFont(font));
+            table.addCell(new Paragraph(String.valueOf(word.get("meanings2"))).setFont(font));
+            table.addCell(new Paragraph(String.valueOf(word.get("meanings3"))).setFont(font));
+            table.addCell(new Paragraph(String.valueOf(word.get("workType"))).setFont(font));
+        }
+
+        doc.add(table);
+        doc.close();
+        return outputStream.toByteArray();
+    }
+
+    public void createWorld(Words words) {
         try {
             wordsRepository.save(words);
         } catch (Exception e) {

@@ -6,6 +6,8 @@ import com.example.english.dto.DtoTestGame;
 import com.example.english.entity.Words;
 import com.example.english.service.WordsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,15 @@ public class WordsController {
     private final WordsService wordsService;
 
 
+    @GetMapping("/pdf")
+    public ResponseEntity<byte[]> getPdf(String workType,int id)throws Exception {
+        byte[] pdfBytes = wordsService.pdfForWord(workType, id);
 
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=example.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
     @GetMapping("/findWordIdsByUserIdNotInTransactions/{workType}/{userId}")
     public List<Words> getRandomWordsByWorkTypeAndUserId(@PathVariable String workType, @PathVariable int userId) {
         return wordsService.findWordIdsByUserIdNotInTransactions(workType, userId);
@@ -56,7 +66,7 @@ public class WordsController {
 
     @PostMapping("/create")
     public void createWord(@RequestBody Words words){
-        wordsService.createWorldById(words);
+        wordsService.createWorld(words);
     }
 
 
