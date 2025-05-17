@@ -2,7 +2,7 @@ HELP.md
 target/
 *.class
 *.log
-
+compose.yaml
 
 !.mvn/wrapper/maven-wrapper.jar
 
