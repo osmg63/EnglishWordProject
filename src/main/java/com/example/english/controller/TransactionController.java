@@ -18,8 +18,8 @@ public class TransactionController {
 
     @PostMapping("/create")
     public ResponseEntity<DtoTransactionWord> createTransaction(@RequestBody DtoTransactionWord transaction){
-        transactionService.createTransaction(transaction);
-        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+       DtoTransactionWord data= transactionService.createTransaction(transaction);
+        return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
     @GetMapping("getKnownWordsCountByUserId/{userId}")
     public ResponseEntity<Integer> getKnownWordsCountByUserId(@PathVariable int userId) {

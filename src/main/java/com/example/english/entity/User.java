@@ -27,14 +27,14 @@ public class User implements UserDetails {
     private String password;
     private int point=0;
 
-    @Column(nullable = false, columnDefinition = "BIT DEFAULT 1")
-    private boolean credentialsNonExpired;
-    @Column(nullable = false, columnDefinition = "BIT DEFAULT 1")
-    private boolean accountNonExpired;
-    @Column(nullable = false, columnDefinition = "BIT DEFAULT 1")
-    private boolean isEnabled;
-    @Column(nullable = false, columnDefinition = "BIT DEFAULT 1")
-    private boolean accountNonLocked;
+    @Column(nullable = false)
+    private boolean credentialsNonExpired=true;
+    @Column(nullable = false)
+    private boolean accountNonExpired=true;
+    @Column(nullable = false)
+    private boolean isEnabled=true;
+    @Column(nullable = false)
+    private boolean accountNonLocked=true;
 
     public void setCredentialsNonExpired(boolean credentialsNonExpired) {
         this.credentialsNonExpired = credentialsNonExpired;
