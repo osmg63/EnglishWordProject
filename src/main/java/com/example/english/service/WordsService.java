@@ -8,16 +8,23 @@ import com.example.english.exception.ErrorMessage;
 import com.example.english.exception.MessageType;
 import com.example.english.repo.WordsRepo;
 import com.itextpdf.io.font.PdfEncodings;
+
+
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.itextpdf.layout.Document;
 
-import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Table;
 
 @RequiredArgsConstructor
 @Service
@@ -101,14 +103,18 @@ public class WordsService {
         PdfDocument pdf = new PdfDocument(writer);
         Document doc = new Document(pdf);
 
+        InputStream fontStream = getClass().getClassLoader().getResourceAsStream("fonts/a.ttf");
 
-        PdfFont font = PdfFontFactory.createFont("src/main/resources/a.ttf");
+
+        PdfFont font = PdfFontFactory.createFont(
+                fontStream.readAllBytes(),
+                PdfEncodings.IDENTITY_H
+        );
+
 
         float[] columnWidths = {100f, 150f, 150f, 150f, 50f};
-        Table table = new Table(columnWidths);
-        table.setWidth(UnitValue.createPercentValue(100));
+        Table table = new Table(columnWidths).setWidth(UnitValue.createPercentValue(100));
 
-        // Başlık satırı
         table.addHeaderCell(new Cell().add(new Paragraph("Kelime")).setBackgroundColor(ColorConstants.LIGHT_GRAY).setFont(font));
         table.addHeaderCell(new Cell().add(new Paragraph("Anlam 1")).setBackgroundColor(ColorConstants.LIGHT_GRAY).setFont(font));
         table.addHeaderCell(new Cell().add(new Paragraph("Anlam 2")).setBackgroundColor(ColorConstants.LIGHT_GRAY).setFont(font));
