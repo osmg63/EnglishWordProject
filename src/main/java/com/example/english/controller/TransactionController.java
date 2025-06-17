@@ -16,15 +16,31 @@ public class TransactionController {
 
 
 
-    @PostMapping("/create")
+    @PostMapping("")
     public ResponseEntity<DtoTransactionWord> createTransaction(@RequestBody DtoTransactionWord transaction){
        DtoTransactionWord data= transactionService.createTransaction(transaction);
         return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
-    @GetMapping("getKnownWordsCountByUserId/{userId}")
+    @GetMapping("/{userId}/known-words/count")
     public ResponseEntity<Integer> getKnownWordsCountByUserId(@PathVariable int userId) {
         int count = transactionService.getKnownWordsCountByUserId(userId);
         return ResponseEntity.ok(count);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<DtoTransactionWord> getTransactionById(@PathVariable int id) {
+        DtoTransactionWord data=transactionService.getById(id);
+
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<DtoTransactionWord> updateTransaction(@PathVariable int id,@RequestBody DtoTransactionWord transaction){
+        DtoTransactionWord data= transactionService.updateTransaction(id,transaction);
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+    @GetMapping("/{userId}/{wordId}/id")
+    public ResponseEntity<Integer> getTransactionIdByUserIdAndWordId(@PathVariable int userId, @PathVariable int wordId) {
+        Integer id=transactionService.getTransactionIdByUserIdAndWordId(userId,wordId);
+        return ResponseEntity.ok(id);
     }
 
 

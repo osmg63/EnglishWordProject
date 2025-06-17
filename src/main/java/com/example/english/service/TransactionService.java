@@ -58,5 +58,36 @@ public class TransactionService {
         }
 
     }
+    public DtoTransactionWord updateTransaction(int id,DtoTransactionWord transaction) {
+        try {
+            var data = transactionRepository.findById(id);
+            if(data.isEmpty()) {
+                throw new BaseException(new ErrorMessage(MessageType.RECORD_FAILED));
+            }
+            dtoMapper.updateTransactionFromDto(transaction, data.get());
+            transactionRepository.save(data.get());
+            return dtoMapper.toDTO(data.get());
 
+        }catch (BaseException e) {
+            throw e;
+        }catch (Exception e) {
+            throw new BaseException(new ErrorMessage(MessageType.GENERAL_EXCEPTION, e.getMessage()));
+        }
+
+    }
+    public DtoTransactionWord getById(int id) {
+        try{
+            TransactionWord data=transactionRepository.findById(id).get();
+            return dtoMapper.toDTO(data);
+
+        }catch (Exception e) {
+            throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_FOUND));
+        }
+    }
+
+    public Integer getTransactionIdByUserIdAndWordId(int userId, int wordId) {
+
+        int id=transactionRepository.findIdByUser_IdAndWord_Id(userId,wordId);
+        return id;
+    }
 }

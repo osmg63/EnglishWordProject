@@ -10,6 +10,7 @@ import com.example.english.exception.ErrorMessage;
 import com.example.english.exception.MessageType;
 import com.example.english.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +21,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 import java.util.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService implements UserDetailsService {
@@ -104,8 +106,34 @@ public class UserService implements UserDetailsService {
         }
         return dtoMapper.userToUserResponseDto(data);
     }
+    public DtoUser updateUser(int id, DtoUser dto) {
+        try{
+            User data= userRepository.findById(id);
+            if (data==null) {
+                throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_FOUND));
+            }
+            dtoMapper.updateUserFromDto(dto,data);
+            return dtoMapper.userToUserResponseDto(userRepository.save(data));
+        } catch (Exception e) {
+            throw new BaseException(new ErrorMessage(MessageType.GENERAL_EXCEPTION));
+        }
+
+    }
 
 
-
-
+    public DtoUser getUserByUserName(String userName) {
+        try{
+            Optional<User> data=userRepository.findByUsername(userName);
+            if (data.isEmpty()) {
+                throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_FOUND));
+            }
+            return dtoMapper.userToUserResponseDto(data.get());
+        } catch (BaseException e) {
+            log.error(e.getMessage());
+            throw e;
+        }catch (Exception e) {
+            log.error(e.getMessage());
+            throw new BaseException(new ErrorMessage(MessageType.GENERAL_EXCEPTION));
+        }
+    }
 }

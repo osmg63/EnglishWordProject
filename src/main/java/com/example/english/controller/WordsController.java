@@ -21,8 +21,8 @@ public class WordsController {
     private final WordsService wordsService;
 
 
-    @GetMapping("/pdf")
-    public ResponseEntity<byte[]> getPdf(String workType,int id)throws Exception {
+    @GetMapping("/pdf/{workType}/{id}")
+    public ResponseEntity<byte[]> getPdf(@PathVariable String workType, @PathVariable int id) throws Exception {
         byte[] pdfBytes = wordsService.pdfForWord(workType, id);
 
         return ResponseEntity.ok()

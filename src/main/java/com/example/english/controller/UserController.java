@@ -7,14 +7,11 @@ import com.example.english.dto.DtoUserIU;
 import com.example.english.service.AuthService;
 import com.example.english.service.JwtService;
 import com.example.english.service.UserService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -52,15 +49,20 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/pointShowById/{id}")
+    @GetMapping("/{id}/pointShow")
     public String pointShow(@PathVariable int id) {
         return userService.pointShow(id);
     }
 
-    @GetMapping("/getUserById/{id}")
-    public ResponseEntity<DtoUser> getUserById(@PathVariable int id) {
-        DtoUser dtoUser = userService.getUserById(id);
+    @GetMapping("/{userName}")
+    public ResponseEntity<DtoUser> getUserByUserName(@PathVariable String userName) {
+        DtoUser dtoUser = userService.getUserByUserName(userName);
         return ResponseEntity.ok(dtoUser);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<DtoUser> update(@PathVariable int id,@RequestBody  DtoUser dto) {
+        DtoUser user = userService.updateUser(id,dto);
+        return ResponseEntity.ok(user);
     }
 
 }
