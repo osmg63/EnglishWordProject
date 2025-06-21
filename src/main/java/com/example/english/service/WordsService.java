@@ -46,7 +46,7 @@ public class WordsService {
 
     public List<Words> findWordIdsByUserIdNotInTransactions(String workType, int userId) {
         try {
-            List<Integer> id = transactionService.findWordIdsByUserIdKnowTrue(userId);
+            List<Integer> id = transactionService.findWordIdsByUserId(userId);
             if(id.isEmpty()) {
                 List<Words> words=wordsRepository.findWithoutIds(workType);
                 return words;

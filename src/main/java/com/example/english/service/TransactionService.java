@@ -22,7 +22,15 @@ public class TransactionService {
     private final DtoMapper dtoMapper;
     public List<Integer> findWordIdsByUserIdKnowTrue(int userId) {
         try {
-            return transactionRepository.findWordIdsByUserIdAAndKnowTrue(userId);
+            return transactionRepository.findWordIdsByUserIdAndKnowTrue(userId);
+        } catch (Exception e) {
+            throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_FOUND));
+        }
+
+    }
+    public List<Integer> findWordIdsByUserId(int userId) {
+        try {
+            return transactionRepository.findWordIdsByUserId(userId);
         } catch (Exception e) {
             throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_FOUND));
         }

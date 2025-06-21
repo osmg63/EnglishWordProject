@@ -82,7 +82,7 @@ public class UserService implements UserDetailsService {
         try{
             User user=userRepository.findById(id);
             System.out.println(user.getPoint());
-            user.setPoint(user.getPoint()+5);
+            user.setPoint(user.getPoint()+1);
 
             userRepository.save(user);
 
