@@ -11,12 +11,14 @@ import java.net.URL;
 @Component
 public class SelfPingTask {
 
-    @Scheduled(fixedRate = 5 * 60 * 1000) // 10 dakikada bir
+    @Scheduled(fixedRate = 5 * 60 * 100)
     public void pingSelf() {
         try {
             URL url = new URL("https://englishwordproject.onrender.com/swagger-ui/index.html#/ ");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+            int responseCode = conn.getResponseCode();
+            System.out.println(responseCode);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
