@@ -49,4 +49,29 @@ public class AIService {
         }
 
     }
+    public String createParagraph(String question) {
+        try{
+            question = question+"kelimeleri ile ilgili ingilizce akılda kalıcı bir paragraph kur ve türkçe çevirisinide altına ver alt alta olsunlar başka açıklama yapma ";
+            Map<String, Object> requestBody = Map.of("contents", new Object[]{
+                    Map.of("parts",new Object[]{
+                            Map.of("text", question),
+                    })
+            });
+
+            String response= webClient.post()
+                    .uri(geminiApiUrl + geminiApiKey)
+                    .header("Content-Type","application/json")
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+
+
+            return response;
+        }catch (Exception e){
+            throw new BaseException(new ErrorMessage(MessageType.AI_FAILED));
+        }
+
+    }
 }

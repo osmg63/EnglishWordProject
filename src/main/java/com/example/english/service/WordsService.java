@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -170,6 +167,7 @@ public class WordsService {
         try {
             List<Integer> id = transactionService.findWordIdsByUserIdKnowFalse(userId);
             List<Words> words = wordsRepository.findWorkByIdsAndByWorkType(id, workType);
+            Collections.shuffle(words);
             return words;
         } catch (Exception e) {
             throw new BaseException(new ErrorMessage(MessageType.GENERAL_EXCEPTION, e.getMessage()));

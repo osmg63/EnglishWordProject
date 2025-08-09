@@ -22,7 +22,11 @@ public class AIController {
     public ResponseEntity<String> askQuestion(@RequestBody @Valid DtoAIRequest word) {
         String answer = service .getAnswer(word.getWord());
         return ResponseEntity.ok(answer);
-
+    }
+    @PostMapping("/createParagraph")
+    public ResponseEntity<String> createParagraph(@RequestBody @Valid DtoAIRequest word) {
+        String answer = service .createParagraph(word.getWord());
+        return ResponseEntity.ok(answer);
     }
 
 }
