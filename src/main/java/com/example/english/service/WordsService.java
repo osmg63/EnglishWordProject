@@ -138,7 +138,9 @@ public class WordsService {
             throw new BaseException(new ErrorMessage(MessageType.RECORD_FAILED, e.getMessage()));
         }
     }
-
+    public List<Words> getAllWords() {
+        return wordsRepository.findAll();
+    }
     public List<Words> findWordsKnowTrue(int userId, String workType) {
         try {
             List<Integer> id = transactionService.findWordIdsByUserIdKnowTrue(userId);

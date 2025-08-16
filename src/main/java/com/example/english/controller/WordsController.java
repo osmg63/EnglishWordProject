@@ -46,6 +46,10 @@ public class WordsController {
     public List<Words> getWordsBydUserIdAndKnowFalse( @PathVariable int userId,@PathVariable String workType) {
         return wordsService.findWordsKnowFalse(userId,workType);
     }
+    @GetMapping("")
+    public ResponseEntity<List<Words>> getAllWords() {
+        return ResponseEntity.ok(wordsService.getAllWords());
+    }
     @GetMapping("/getRandomWord/{workType}")
     public ResponseEntity<DtoTestGame> getRandomWord(@PathVariable String workType) {
         var result = wordsService.findRandomWord(workType);
