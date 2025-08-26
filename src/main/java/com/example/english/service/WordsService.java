@@ -130,7 +130,6 @@ public class WordsService {
         doc.close();
         return outputStream.toByteArray();
     }
-
     public void createWorld(Words words) {
         try {
             wordsRepository.save(words);
@@ -177,7 +176,6 @@ public class WordsService {
 
 
     }
-
     public DtoTestGame findRandomWord(String workType) {
         try {
             Optional<Words> words = wordsRepository.findRandomWordByWorkType(workType);
