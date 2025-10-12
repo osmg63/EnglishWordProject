@@ -1,5 +1,6 @@
 package com.example.english.service;
 
+import com.example.english.dto.DtoChangePassword;
 import com.example.english.dto.DtoMapper;
 import com.example.english.dto.DtoUser;
 import com.example.english.dto.DtoUserIU;
@@ -9,6 +10,7 @@ import com.example.english.exception.BaseException;
 import com.example.english.exception.ErrorMessage;
 import com.example.english.exception.MessageType;
 import com.example.english.repo.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +30,17 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final DtoMapper dtoMapper;
+
+    public Boolean changePassword(DtoChangePassword dto) {
+        var data=userRepository.findById(dto.getId());
+
+        if (passwordEncoder.matches(dto.getOldPassword(), data.getPassword())) {
+            data.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+            userRepository.save(data);
+            return true;
+        }
+        return false;
+    }
 
 
     @Override

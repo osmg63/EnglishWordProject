@@ -1,5 +1,6 @@
 package com.example.english.controller;
 
+import com.example.english.dto.DtoChangePassword;
 import com.example.english.dto.DtoLoginIU;
 import com.example.english.dto.DtoUser;
 import com.example.english.dto.DtoUserIU;
@@ -34,7 +35,12 @@ public class UserController {
         String data= authService.generateToken(request);
         return ResponseEntity.ok(data);
     }
-
+    @PostMapping("/changePassword")
+    public ResponseEntity<Boolean> changePassword(@RequestBody @Valid DtoChangePassword dto)
+    {
+        Boolean bool=userService.changePassword(dto);
+        return ResponseEntity.ok(bool);
+    }
     @PostMapping("/create")
     public ResponseEntity<DtoUser> add(@RequestBody @Valid DtoUserIU user){
 
