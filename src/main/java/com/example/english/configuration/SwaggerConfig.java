@@ -26,23 +26,4 @@ public class SwaggerConfig {
 
 
     }
-
-
-
-
-
-
-
-
-/*
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("Words-App API")
-                        .version("1.0.0")
-                        .description("API Endpoint Decoration")
-                        .license(new License().name("Apache 2.0").url("http://www.apache.org/licenses/LICENSE-2.0.html")));
-    }
-*/
 }

@@ -29,7 +29,6 @@ public class UserController {
         this.userService = userService;
         this.authService = authService;
     }
-
     @PostMapping("/generateToken")
     public ResponseEntity<String> generateToken(@RequestBody DtoLoginIU request) {
         String data= authService.generateToken(request);
@@ -45,9 +44,7 @@ public class UserController {
     public ResponseEntity<DtoUser> add(@RequestBody @Valid DtoUserIU user){
 
           var data= userService.save(user);
-            return ResponseEntity.ok(data);
-
-
+          return ResponseEntity.ok(data);
     }
     @PostMapping("/login")
     public ResponseEntity<DtoUser> login(@RequestBody @Valid DtoLoginIU dto) {
