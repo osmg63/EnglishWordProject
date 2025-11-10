@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${db_url_test}
-    username: ${db_username_test}
-    password: ${db_password_test}
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
     hikari:
       minimum-idle: 0
       maximum-pool-size: 5
@@ -20,8 +20,8 @@ spring:
       client:
         registration:
           google:
-            client-id: 445785093291-qpem07lfk7p4kcispbt3758c3f1ero0i.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${google-client-id}
+            client-secret: ${google-client-secret}
             scope:
               - email
               - profile
