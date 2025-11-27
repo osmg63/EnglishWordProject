@@ -1,18 +1,17 @@
 package com.example.english.service;
 
-import com.example.english.dto.DtoChangePassword;
-import com.example.english.dto.DtoMapper;
-import com.example.english.dto.DtoUser;
-import com.example.english.dto.DtoUserIU;
+import com.example.english.dto.*;
 import com.example.english.entity.Role;
 import com.example.english.entity.User;
 import com.example.english.exception.BaseException;
 import com.example.english.exception.ErrorMessage;
 import com.example.english.exception.MessageType;
 import com.example.english.repo.UserRepository;
+import com.google.api.client.json.gson.GsonFactory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +21,9 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.*;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -149,4 +151,6 @@ public class UserService implements UserDetailsService {
             throw new BaseException(new ErrorMessage(MessageType.GENERAL_EXCEPTION));
         }
     }
+
+
 }

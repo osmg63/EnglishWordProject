@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(x ->
                         x.requestMatchers("/api/user/welcome/**","/swagger-ui/**","/swagger-ui/","/v3/api-docs/**",
-                                "/api/user/create/**", "/api/user/generateToken/**","/api/user/generateToken","/auth/**", "/oauth2/**", "/login/**").permitAll()
+                                "/api/user/create/**","/api/user/auth/google", "/api/user/generateToken/**","/api/user/generateToken","/auth/**", "/oauth2/**", "/login/**").permitAll()
                 )
                 .authorizeHttpRequests(x ->
                                 x.requestMatchers("/api/user/admin").hasRole("ADMIN")

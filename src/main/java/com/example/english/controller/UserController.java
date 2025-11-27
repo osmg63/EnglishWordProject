@@ -15,6 +15,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @Slf4j
 @RequestMapping("/api/user")
@@ -33,6 +35,11 @@ public class UserController {
     public ResponseEntity<String> generateToken(@RequestBody DtoLoginIU request) {
         String data= authService.generateToken(request);
         return ResponseEntity.ok(data);
+    }
+    @PostMapping("/auth/google")
+    public ResponseEntity<String> googleLogin(@RequestBody Map<String, String> body) {
+        String idToken = body.get("idToken");
+     return ResponseEntity.ok(authService.authWithGoogle(idToken));
     }
     @PostMapping("/changePassword")
     public ResponseEntity<Boolean> changePassword(@RequestBody @Valid DtoChangePassword dto)
