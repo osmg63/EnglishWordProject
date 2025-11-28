@@ -1,6 +1,7 @@
 package com.example.english.controller;
 
 import com.example.english.dto.DtoChangePassword;
+import com.example.english.dto.DtoRemoveAccount;
 import com.example.english.dto.DtoLoginIU;
 import com.example.english.dto.DtoUser;
 import com.example.english.dto.DtoUserIU;
@@ -45,6 +46,12 @@ public class UserController {
     public ResponseEntity<Boolean> changePassword(@RequestBody @Valid DtoChangePassword dto)
     {
         Boolean bool=userService.changePassword(dto);
+        return ResponseEntity.ok(bool);
+    }
+    @PostMapping("/removeAccount")
+    public ResponseEntity<Boolean> removeAccount(@RequestBody @Valid DtoRemoveAccount dto)
+    {
+        Boolean bool=userService.removeAccount(dto);
         return ResponseEntity.ok(bool);
     }
     @PostMapping("/create")

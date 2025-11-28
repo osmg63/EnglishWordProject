@@ -44,6 +44,20 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
+    public Boolean removeAccount(DtoRemoveAccount dto) {
+        try {
+            var data=userRepository.findById(dto.getId());
+
+            if (passwordEncoder.matches(dto.getPassword(), data.getPassword())) {
+                userRepository.delete(data);
+                return true;
+            }
+            return false;
+        }catch (EntityNotFoundException e) {
+            return false;
+        }
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
